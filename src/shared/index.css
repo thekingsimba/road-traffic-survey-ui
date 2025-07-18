@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  [type="checkbox"],
+  [type="radio"] {
+    @apply size-[18px] border-2 border-[#C3C6CC] text-[#166298]
+    hover:border-[#166298]
+    focus:outline-offset-0 focus:outline-[3px] focus:outline-[#DDDFE4] focus:ring-0 focus:ring-offset-0
+    checked:focus:outline-primary/25
+    cursor-pointer;
+  }
+}
+
+.button-shadow {
+  @apply shadow-[inset_0px_-1px_3px_-1px_#0000001F,inset_0px_2px_3px_0px_#FFFFFF1F,0px_3px_3px_-1.5px_#0000000A,0px_1px_1px_-0.5px_#0000000A];
+}
+
+.page-without-header {
+  @apply pt-11 lg:pt-16;
+}
+
+@layer utilities {
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+}
+
+@layer base {
+  input[type='text']:focus,
+  input[type='password']:focus,
+  input[type='email']:focus,
+  input[type='number']:focus,
+  textarea:focus
+  {
+    --tw-ring-color: #00629B3D;
+    border-color: #166298;
+  }
+}
+
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}

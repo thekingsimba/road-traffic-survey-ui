@@ -1,0 +1,1 @@
+export { FilterPanelWrapper } from './FilterPanelWrapper';

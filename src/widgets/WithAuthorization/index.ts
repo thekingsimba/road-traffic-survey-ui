@@ -1,0 +1,1 @@
+export { WithAuthorization } from './WithAuthorization';
