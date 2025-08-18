@@ -23,7 +23,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: |
-        touch .env
-        echo "${{ secrets.DEV_ENV_FILE }}" > .env
+        touch .env.local
+        echo "${{ secrets.DEV_ENV_FILE }}" > .env.local
     - run: npm ci
     - run: npm run build --if-present
