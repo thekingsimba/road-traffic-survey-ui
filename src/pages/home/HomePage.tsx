@@ -18,9 +18,9 @@ export type SmallCardPropsType = {
 const smallCardData: SmallCardPropsType[] = [
   {
     iconId: 'user-group-icon',
-    cardTitle: 'clients',
-    description: 'setupAndManageClients',
-    navigateToUrl: '/clients',
+    cardTitle: 'survey',
+    description: 'setupAndManageSurveys',
+    navigateToUrl: '/surveys',
   },
   {
     iconId: 'user-group-icon',

@@ -1,3 +1,13 @@
 {
-  "test": "test"
+  "test": "test",
+  "logInToYourAccount": "Log in to your account",
+  "enterYourEmail": "Enter your email",
+  "enterYourPassword": "Enter your password",
+  "invalidEmail": "Invalid email format",
+  "forgotPassword": "Forgot password?",
+  "logIn": "Log in",
+  "incorrectEmailOrPassword": "Incorrect email or password",
+  "inactiveUser": "User account is inactive",
+  "toManyRequest": "Too many requests. Please try again later.",
+  "historyValidPassword": "Password has been used recently. Please choose a different password."
 }

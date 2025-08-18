@@ -17,7 +17,7 @@ export const LoginPage = () => {
   const signInWithCredentials = useUserStore(state => state.signInWithCredentials);
   const isAuthorized = useUserStore(state => state.isAuthorized);
   const [, navigate] = useLocation();
-  const [currentUserData, setCurrentUserData] = useState<AuthUserResponse>({});
+  const [currentUserData, setCurrentUserData] = useState<AuthUserResponse | null>(null);
   const [isShouldChangePassword, setIsShouldChangePassword] = useState(false);
 
   const handleSignInComplete = (authResponse: AuthUserResponse) => {
@@ -27,43 +27,47 @@ export const LoginPage = () => {
   };
 
   const handleLoginSubmit = async (request: SignInRequest) => {
+    try {
+      const response = await signIn(request);
 
-    const response = await signIn(request);
-
-    switch (response.status) {
-      case 200: {
+      if (response.status === 200) {
         const data = await response.json();
 
-        if (data.passwordResetToken) {
-          setCurrentUserData(data);
-          setIsShouldChangePassword(true);
+        if (data.success) {
+          // Check if user needs to change password (you might need to adjust this logic based on your backend)
+          if (data.user?.passwordResetToken) {
+            setCurrentUserData(data);
+            setIsShouldChangePassword(true);
+          } else {
+            handleSignInComplete(data);
+          }
         } else {
-          handleSignInComplete(data);
+          signInMethods.setError('password', { message: data.message || t('incorrectEmailOrPassword') }, { shouldFocus: false });
         }
-        break;
-      }
-      case 403: {
+      } else if (response.status === 403) {
         signInMethods.setError('password', { message: t('inactiveUser') }, { shouldFocus: false });
-        break;
-      }
-      case 400:
-      case 404:
-      case 409: {
+      } else if (response.status === 400 || response.status === 404) {
         signInMethods.setError('password', { message: t('incorrectEmailOrPassword') }, { shouldFocus: false });
-        break;
-      }
-      case 429: {
+      } else if (response.status === 429) {
         signInMethods.setError('password', { message: t('toManyRequest') }, { shouldFocus: false });
-        break;
+      } else {
+        signInMethods.setError('password', { message: t('incorrectEmailOrPassword') }, { shouldFocus: false });
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      signInMethods.setError('password', { message: t('incorrectEmailOrPassword') }, { shouldFocus: false });
     }
   };
 
   const handleCreateNewPasswordSubmit = async (formData: CreateNewPasswordFormData) => {
     try {
+      if (!currentUserData) {
+        throw new Error('No user data available');
+      }
+
       const response = await changeTemporaryPassword({
         newPassword: formData.newPassword,
-        passwordResetToken: currentUserData.passwordResetToken as string,
+        passwordResetToken: currentUserData.user?.passwordResetToken as string,
         userName: currentUserData.user?.userName as string
       });
 

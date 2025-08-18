@@ -43,14 +43,14 @@ export const LoginForm: FC<LoginFormProps> = ({ onSubmit }) => {
             iconId='mail'
             iconClassName='size-5 top-[13px] left-4'
             className='h-12 w-full text-[15px]'
-            {...register('userName', {
+            {...register('email', {
             required: { value: true, message: '' },
             pattern: {
               value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, message: t('invalidEmail'),
             },
           })}
             maxLength={MAX_PASSWORD_LENGTH}
-            errorMsg={errors.userName?.message}
+            errorMsg={errors.email?.message}
           />
           <Input
             visibilityToggle

@@ -1,26 +1,54 @@
-import type { components } from '@shared/api/types';
+export type SignInRequest = {
+    email: string;
+    password: string;
+};
 
-export type SignInRequest = components['schemas']['SignInRequestDto'];
-export type AuthUserResponse = components['schemas']['AuthUserResponseDto'];
-export type UserDto = components['schemas']['GetUserDto'];
-export type RefreshTokenRequest = components['schemas']['RefreshTokenRequestDto'];
-export type TokenResponse = components['schemas']['Token'];
-export type BaseObject = components['schemas']['BaseObject'];
-export type ChangePasswordRequest = components['schemas']['ChangePasswordRequestDto'];
-export type UpdateUserPasswordRequest = components['schemas']['UpdateUserPasswordDto'];
-export type ChangeCurrentPasswordRequest = components['schemas']['ChangeCurrentPasswordRequest'];
-export type PagedResultOfGetUserDto = components['schemas']['PagedResultOfGetUserDto'];
-export type PagedResultOfClientDto = components['schemas']['PagedResultOfClientDto'];
-export type FilterModelOfClientFilter = components['schemas']['FilterModelOfClientFilter'];
-export type FilterModelOfUserFilter = components['schemas']['FilterModelOfUserFilter'];
-export type GetUserDto = components['schemas']['GetUserDto'];
-export type GetClientDto = components['schemas']['ClientDto'];
-export type CreateClientDto = components['schemas']['CreateClientDto'];
-export type UserFilter = components['schemas']['UserFilter'];
-export type ClientFilter = components['schemas']['ClientFilter'];
-export type CreateUser = components['schemas']['CreateUserDto'];
-export type UpdateUserDto = components['schemas']['UpdateUserDto'];
-export type UpdateClientDto = components['schemas']['UpdateClientDto'];
-export type ForgotPasswordRequest = components['schemas']['ForgotPasswordRequest'];
-export type ConfirmForgotPasswordRequest = components['schemas']['ConfirmForgotPasswordDto'];
-export type CheckForgotPasswordCodeRequest = components['schemas']['CheckForgotPasswordCodeDto'];
+export type AuthUserResponse = {
+    success: boolean;
+    message: string;
+    token: {
+        token: string;
+        expires_at: string;
+    };
+    user: {
+        _id: string;
+        email: string;
+        full_name: string;
+        phone?: string;
+        role?: string;
+        passwordResetToken?: string;
+        userName?: string;
+    };
+};
+
+export type UserDto = {
+    id: string;
+    email: string;
+    full_name: string;
+    phone?: string;
+    role?: string;
+};
+
+export type RefreshTokenRequest = {
+    refreshToken: string;
+};
+
+export type TokenResponse = {
+    accessToken: string;
+    refreshToken: string;
+};
+
+export type ForgotPasswordRequest = {
+    email: string;
+};
+
+export type CheckForgotPasswordCodeRequest = {
+    email: string;
+    confirmationCode: string;
+};
+
+export type ConfirmForgotPasswordRequest = {
+    email: string;
+    confirmationCode: string;
+    newPassword: string;
+};

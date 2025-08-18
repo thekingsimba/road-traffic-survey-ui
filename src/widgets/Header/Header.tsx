@@ -38,10 +38,10 @@ export const Header = () => {
 
       <div className='relative flex h-16 w-screen items-center justify-between px-4'>
 
-        <img src='/images/logo_image.png' alt='logo' className='ml-4 h-7 w-[115px]' />
+        <img src='/images/logo-placeholder.jpg' alt='logo' className='ml-4 h-7 w-[115px]' />
 
-        <div className="absolute inset-0 hidden md:flex items-center justify-center pointer-events-none">
-          <div className="pointer-events-auto">
+        <div className='pointer-events-none absolute inset-0 hidden items-center justify-center md:flex'>
+          <div className='pointer-events-auto'>
             <NavigationPanel />
           </div>
         </div>
@@ -54,9 +54,9 @@ export const Header = () => {
                 <Icon id='user' className='size-4 text-secondary-low' aria-hidden='true' />
                   <span
                     className='text-[15px] max-w-[180px] sm:max-w-[220px] md:max-w-[250px] lg:max-w-[300px] truncate whitespace-nowrap overflow-hidden inline-block align-middle'
-                    title={`${user?.firstName} ${user?.lastName}`}
+                  title={user?.full_name || ''}
                   >
-                    {`${user?.firstName} ${user?.lastName}`}
+                  {user?.full_name || ''}
                   </span>
               </>}
             handleClick={(_, option) => handleuserMenuOptionClick(option)}

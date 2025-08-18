@@ -16,9 +16,13 @@ export const ResetPasswordPage = () => {
   const { t } = useTranslation();
 
 const handleForgotPasswordConfirm = async (newPasswordFormData: CreateNewPasswordFormData) => {
+  if (!resetPasswordFormData?.email || !resetPasswordFormData?.confirmationCode) {
+    return;
+  }
+
   const response = await confirmForgotPassword({
-    email: resetPasswordFormData?.email,
-    confirmationCode: resetPasswordFormData?.confirmationCode,
+    email: resetPasswordFormData.email,
+    confirmationCode: resetPasswordFormData.confirmationCode,
     newPassword: newPasswordFormData.newPasswordConfirm,
   });
 
