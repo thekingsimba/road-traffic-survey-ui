@@ -52,12 +52,12 @@ export const Header = () => {
             view={
               <>
                 <Icon id='user' className='size-4 text-secondary-low' aria-hidden='true' />
-                  <span
-                    className='text-[15px] max-w-[180px] sm:max-w-[220px] md:max-w-[250px] lg:max-w-[300px] truncate whitespace-nowrap overflow-hidden inline-block align-middle'
+                <span
+                  className='inline-block max-w-[180px] overflow-hidden truncate whitespace-nowrap align-middle text-[15px] sm:max-w-[220px] md:max-w-[250px] lg:max-w-[300px]'
                   title={user?.full_name || ''}
-                  >
+                >
                   {user?.full_name || ''}
-                  </span>
+                </span>
               </>}
             handleClick={(_, option) => handleuserMenuOptionClick(option)}
             classNames={{
