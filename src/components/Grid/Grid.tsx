@@ -323,6 +323,7 @@ export const Grid: FC<GridProps> = ({
               value={resultsPerPage}
               onChange={(e) => onResultsPerPageChange(parseInt(e.target.value, 10))}
               className='h-8 w-[54px] cursor-pointer rounded-md border-none bg-[#F9F9FA] p-0 pl-2 text-[12px] text-regular shadow-sm focus:ring focus:ring-[#00629B3D]'
+              aria-label={t('resultsPerPage')}
             >
               <option value={10}>10</option>
               <option value={25}>25</option>
