@@ -51,13 +51,14 @@ export const CreateUserButton: FC<CreateUserButtonProps> = ({ onComplete, disabl
     try {
       const response = await createUser(data);
 
-      if (response.success) {
+      // Check if the response is successful (backend returns error: false for success)
+      if (!response.error && response.code >= 200 && response.code < 300) {
         await onComplete();
         reset();
         setIsModalOpen(false);
       } else {
         // Handle error case
-        setError('email', { message: t('userAlreadyExists') }, { shouldFocus: true });
+        setError('email', { message: response.message || t('userAlreadyExists') }, { shouldFocus: true });
       }
     } catch (error) {
       console.error('Failed to create user:', error);

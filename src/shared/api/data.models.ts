@@ -21,7 +21,7 @@ export type User = {
     email: string;
     phone?: string;
     picture?: string;
-    role?: string;
+    role?: string | { name: string };
     countingPost?: 'start' | 'end';
     createdAt?: string;
     updatedAt?: string;
@@ -67,8 +67,9 @@ export type PaginatedUsersResponse = {
 }
 
 export type UserResponse = {
-    success: boolean;
     message: string;
-    user: User;
+    error: boolean;
+    code: number;
+    results: User;
 }
 

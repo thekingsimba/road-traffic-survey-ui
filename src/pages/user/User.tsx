@@ -136,15 +136,17 @@ export const UserComponent = () => {
       </Button>
     </div>);
 
-  const transformedData = data.map((item) => ({
-    ...item,
-    email: item.email ?? '',
-    full_name: item.full_name ?? '',
-    phone: item.phone ?? '-',
-    role: item.role ?? '-',
-    countingPost: item.countingPost ? t(item.countingPost) : '-',
-    id: item.id ?? '',
-  }));
+  const transformedData = data.map((item) => {
+    const roleValue = typeof item.role === 'object' && item.role?.name ? item.role.name : (typeof item.role === 'string' ? item.role : '-');
+    return {
+      id: item.id ?? '',
+      email: item.email ?? '',
+      full_name: item.full_name ?? '',
+      phone: item.phone ?? '-',
+      role: roleValue,
+      countingPost: item.countingPost ? t(item.countingPost) : '-',
+    };
+  });
 
   const handleActionClick = (option: DropdownMenuOption<string>) => {
     const user = data.find((u) => u.id === option.value);

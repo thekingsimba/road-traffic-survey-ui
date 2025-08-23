@@ -33,7 +33,7 @@ export const Header = () => {
   return (
     <header className='fixed z-[19] mb-2 bg-[#FFFFFFA3] pt-2 backdrop-blur-[96px]'>
       <WithAuthorization>
-        <div className='hidden text-center text-[18px] font-[700] leading-[24px] text-secondary-low md:block'> {t('DFCIadminPanel')}</div>
+        <div className='hidden text-center text-[18px] font-[700] leading-[24px] text-secondary-low md:block'> {t('RoadSurveyApp')}</div>
       </WithAuthorization>
 
       <div className='relative flex h-16 w-screen items-center justify-between px-4'>
