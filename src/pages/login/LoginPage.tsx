@@ -87,7 +87,7 @@ export const LoginPage = () => {
     if (isAuthorized) {
       navigate('/');
     }
-  }, []);
+  }, [isAuthorized, navigate]);
 
   return isShouldChangePassword ? (
     <FormProvider {...createNewPasswordMethods}>
