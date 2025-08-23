@@ -72,7 +72,8 @@ const refreshTokenMiddleWare = async (
 };
 
 export const apiCallHandler = ky.extend({
-  credentials: 'include',
+  // Use 'include' for production (cross-origin), 'same-origin' for development
+  credentials: import.meta.env.DEV ? 'same-origin' : 'include',
   prefixUrl: envs.VITE_API_BASE_URL,
   timeout: 15000,
   hooks: {

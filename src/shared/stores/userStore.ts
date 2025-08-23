@@ -24,14 +24,14 @@ export const useUserStore = create<UserStore>()(
         signInWithCredentials: (authResponse) => {
           set({
             isAuthorized: true,
-            accessToken: authResponse.token?.token,
-            refreshToken: authResponse.token?.token, // Using the same token as refresh token for now
+            accessToken: authResponse.results.token,
+            refreshToken: authResponse.results.token, // Using the same token as refresh token for now
             user: {
-              id: authResponse.user._id,
-              email: authResponse.user.email,
-              full_name: authResponse.user.full_name,
-              phone: authResponse.user.phone,
-              role: authResponse.user.role,
+              id: authResponse.results.user._id,
+              email: authResponse.results.user.email,
+              full_name: authResponse.results.user.full_name,
+              phone: authResponse.results.user.phone,
+              role: authResponse.results.user.role,
             },
           });
         },

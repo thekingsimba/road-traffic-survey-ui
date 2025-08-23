@@ -4,20 +4,19 @@ export type SignInRequest = {
 };
 
 export type AuthUserResponse = {
-    success: boolean;
     message: string;
-    token: {
+    error: boolean;
+    code: number;
+    results: {
         token: string;
         expires_at: string;
-    };
-    user: {
-        _id: string;
-        email: string;
-        full_name: string;
-        phone?: string;
-        role?: string;
-        passwordResetToken?: string;
-        userName?: string;
+        user: {
+            _id: string;
+            email: string;
+            full_name: string;
+            phone?: string;
+            role?: string;
+        };
     };
 };
 
