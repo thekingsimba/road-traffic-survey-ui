@@ -50,13 +50,19 @@ export type UserFilter = {
 }
 
 export type PaginatedUsersResponse = {
-    success: boolean;
     message: string;
-    data: User[];
-    pagination: {
+    error: boolean;
+    code: number;
+    results: {
+        docs: User[];
+        totalDocs: number;
         page: number;
         limit: number;
-        total: number;
+        prevPage: number | null;
+        nextPage: number | null;
+        totalPages: number;
+        hasPrevPage: boolean;
+        hasNextPage: boolean;
     };
 }
 

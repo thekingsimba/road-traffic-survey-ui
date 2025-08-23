@@ -51,7 +51,7 @@ export const UserComponent = () => {
     }
   ];
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await getUsers({
@@ -61,14 +61,14 @@ export const UserComponent = () => {
         filter: filters,
       });
 
-      setData(response.data ?? []);
-      setTotalPages(Math.ceil((response.pagination?.total ?? 0) / resultsPerPage));
+      setData(response.results?.docs ?? []);
+      setTotalPages(response.results?.totalPages ?? 1);
     } catch (error) {
       console.error('Failed to fetch Users:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, resultsPerPage, searchTerm, filters]);
 
   const handleExportCsv = async () => {
     if (isDownloading)
@@ -87,7 +87,7 @@ export const UserComponent = () => {
 
   useEffect(() => {
     fetchData();
-  }, [searchTerm, currentPage, sortBy, sortDescending, resultsPerPage, filters, fetchData]);
+  }, [searchTerm, currentPage, resultsPerPage, filters, fetchData]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
