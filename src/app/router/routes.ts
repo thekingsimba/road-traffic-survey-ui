@@ -32,7 +32,7 @@ export const ROUTES: Route[] = [
     authorizationRequired: true,
   },
   {
-    path: '/error/:errorCode',
+    path: '/errors/:errorCode',
     content: ErrorsPage,
   }
 ];
