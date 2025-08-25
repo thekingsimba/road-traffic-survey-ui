@@ -36,7 +36,7 @@ jobs:
     - name: Cleanup server
       if: always()
       run: |
-        echo "🧹 Cleaning up frontend runner..."
+        echo "🧹 Cleaning up frontend runner...."
         pkill -f "node" || true
         npm cache clean --force || true
         rm -rf ~/.npm/_cacache || true
