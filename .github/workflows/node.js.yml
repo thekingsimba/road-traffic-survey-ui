@@ -36,10 +36,10 @@ jobs:
     - name: Cleanup server
       if: always()
       run: |
-        echo "🧹 Cleaning up frontend runner...."
+        echo "🧹 Cleaning up frontend runner..."
         pkill -f "node" || true
         npm cache clean --force || true
         rm -rf ~/.npm/_cacache || true
-        rm -rf ./node_modules || true   # safe to remove (npm ci reinstalls each run)
-        rm -rf /tmp/* || true
+        rm -rf ./node_modules || true   # safe for frontend (npm ci reinstalls)
+        rm -rf ${{ github.workspace }}/tmp || true
         echo "✅ Frontend cleanup done"
