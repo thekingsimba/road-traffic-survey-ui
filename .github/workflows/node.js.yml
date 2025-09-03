@@ -1,7 +1,7 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# Frontend CI workflow
+# Cleans, builds, and deploys frontend app
 
-name: Node.js CI
+name: Frontend CI
 
 on:
   push:
@@ -17,13 +17,29 @@ jobs:
         node-version: [22.x]
     steps:
     - uses: actions/checkout@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+
     - run: npm ci
+
     - run: |
         touch .env.local
         echo "${{ secrets.DEV_ENV_FILE }}" > .env.local
+
     - run: npm run build --if-present
+
+    # 🚀 Cleanup after build
+    - name: Cleanup server
+      if: always()
+      run: |
+        echo "🧹 Cleaning up frontend runner..."
+        pkill -f "node" || true
+        npm cache clean --force || true
+        rm -rf ~/.npm/_cacache || true
+        rm -rf ./node_modules || true   # safe for frontend (npm ci reinstalls)
+        rm -rf ${{ github.workspace }}/tmp || true
+        echo "✅ Frontend cleanup done"
