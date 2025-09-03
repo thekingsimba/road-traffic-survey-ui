@@ -73,3 +73,74 @@ export type UserResponse = {
     results: User;
 }
 
+// Survey Management Types based on backend schema
+export type Survey = {
+    id: string;
+    name: string;
+    startPoint: string;
+    endPoint: string;
+    scheduledStartTime: string;
+    scheduledEndTime: string;
+    actualStartTime?: string;
+    actualEndTime?: string;
+    status: 'active' | 'inactive' | 'archived';
+    motorcycleCount: number;
+    carCount: number;
+    startPointAgent?: string | { id: string; full_name: string; email: string; phone: string };
+    endPointAgent?: string | { id: string; full_name: string; email: string; phone: string };
+    createdBy: string | { id: string; full_name: string; email: string };
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export type CreateSurveyRequest = {
+    name: string;
+    startPoint: string;
+    endPoint: string;
+    scheduledStartTime: string;
+    scheduledEndTime: string;
+    startPointAgent?: string;
+    endPointAgent?: string;
+}
+
+export type UpdateSurveyRequest = {
+    id: string;
+    name?: string;
+    startPoint?: string;
+    endPoint?: string;
+    scheduledStartTime?: string;
+    scheduledEndTime?: string;
+    startPointAgent?: string;
+    endPointAgent?: string;
+    status?: 'active' | 'inactive' | 'archived';
+}
+
+export type SurveyFilter = {
+    search?: string;
+    status?: 'active' | 'inactive' | 'archived';
+}
+
+export type PaginatedSurveysResponse = {
+    message: string;
+    error: boolean;
+    code: number;
+    results: {
+        docs: Survey[];
+        totalDocs: number;
+        page: number;
+        limit: number;
+        prevPage: number | null;
+        nextPage: number | null;
+        totalPages: number;
+        hasPrevPage: boolean;
+        hasNextPage: boolean;
+    };
+}
+
+export type SurveyResponse = {
+    message: string;
+    error: boolean;
+    code: number;
+    results: Survey;
+}
+

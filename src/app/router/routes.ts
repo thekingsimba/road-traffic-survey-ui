@@ -5,6 +5,7 @@ const ChangePassword = lazy(() => import('@pages/change-password'));
 const ResetPassword = lazy(() => import('@pages/reset-password'));
 const Home = lazy(() => import('@pages/home'));
 const User = lazy(() => import('@pages/user'));
+const Survey = lazy(() => import('@pages/survey'));
 const ErrorsPage = lazy(() => import('@pages/errors'));
 
 export const ROUTES: Route[] = [
@@ -29,6 +30,11 @@ export const ROUTES: Route[] = [
   {
     path: '/users',
     content: User,
+    authorizationRequired: true,
+  },
+  {
+    path: '/surveys',
+    content: Survey,
     authorizationRequired: true,
   },
   {

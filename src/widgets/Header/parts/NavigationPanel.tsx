@@ -35,6 +35,14 @@ export const NavigationPanel = () => {
           />
         </Link>
 
+        <Link to='/surveys' className={getTriggerClass('/surveys', location)}>
+          <Typography
+            text={t('surveys')}
+            className='truncate text-inherit first-letter:capitalize'
+            weight='bold'
+          />
+        </Link>
+
         <Link to='/clients' className={getTriggerClass('/clients', location)}>
           <Typography
             text={t('clients')}
