@@ -7,13 +7,15 @@ interface DateTimePickerProps {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
+  required?: boolean;
 }
 
 export const DateTimePicker = ({ 
   label, 
   value, 
   onChange, 
-  disabled = false 
+  disabled = false,
+  required = false
 }: DateTimePickerProps) => {
   const [dateValue, setDateValue] = useState('');
   const [timeValue, setTimeValue] = useState('');
@@ -62,6 +64,7 @@ export const DateTimePicker = ({
           value={dateValue}
           onChange={handleDateChange}
           disabled={disabled}
+          required={required}
           className="flex-1"
         />
         <Input
@@ -69,6 +72,7 @@ export const DateTimePicker = ({
           value={timeValue}
           onChange={handleTimeChange}
           disabled={disabled}
+          required={required}
           className="flex-1"
         />
       </div>
