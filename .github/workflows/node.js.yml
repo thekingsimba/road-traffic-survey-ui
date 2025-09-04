@@ -37,7 +37,6 @@ jobs:
       if: always()
       run: |
         echo "🧹 Cleaning up frontend runner..."
-        pkill -f "node" || true
         npm cache clean --force || true
         rm -rf ~/.npm/_cacache || true
         rm -rf ./node_modules || true   # safe for frontend (npm ci reinstalls)
