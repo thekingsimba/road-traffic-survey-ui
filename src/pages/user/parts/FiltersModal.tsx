@@ -38,10 +38,6 @@ export const FiltersModal: React.FC<FiltersModalProps> = ({
     { label: t('admin'), value: 'admin' },
   ];
 
-  const countingPostOptions = [
-    { label: t('start'), value: 'start' },
-    { label: t('end'), value: 'end' },
-  ];
 
   return (
     <BaseSideModal
@@ -74,26 +70,6 @@ export const FiltersModal: React.FC<FiltersModalProps> = ({
             />
           </FilterPanelWrapper>
 
-          <FilterPanelWrapper label={t('countingPost')}>
-            <Select
-              options={countingPostOptions}
-              selected={
-                filters.countingPost === undefined ? [] :
-                countingPostOptions.filter(o => o.value === filters.countingPost)
-              }
-              onChange={(val) =>
-                setFilters((prev: UserFilter) => ({
-                  ...prev,
-                  countingPost: (val[0]?.value as 'start' | 'end') ?? undefined,
-                }))
-              }
-              getOptionKey={(option) => option.value.toString()}
-              getOptionLabel={(option) => option.label}
-              disableSearch
-              multiSelect={false}
-              placeholderKey={t('selectCountingPost')}
-            />
-          </FilterPanelWrapper>
         </div>
         <div>
           <FilterFooter onReset={onReset} onApply={handleApply} />

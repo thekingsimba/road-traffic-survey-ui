@@ -29,8 +29,7 @@ export const UserComponent = () => {
   const [loading, setLoading] = useState(false);
   const defaultFilters: UserFilter = {
     search: undefined,
-    role: undefined,
-    countingPost: undefined
+    role: undefined
   };
   const [filters, setFilters] = useState<UserFilter>(defaultFilters);
 
@@ -38,8 +37,7 @@ export const UserComponent = () => {
     { key: 'email', label: t('email') },
     { key: 'full_name', label: t('fullName') },
     { key: 'phone', label: t('phone') },
-    { key: 'role', label: t('role') },
-    { key: 'countingPost', label: t('countingPost') }
+    { key: 'role', label: t('role') }
   ];
 
   const actionsConfig: RowAction[] = [
@@ -144,7 +142,6 @@ export const UserComponent = () => {
       full_name: item.full_name ?? '',
       phone: item.phone ?? '-',
       role: roleValue,
-      countingPost: item.countingPost ? t(item.countingPost) : '-',
     };
   });
 
@@ -159,16 +156,10 @@ export const UserComponent = () => {
       label: t('role'),
       render: () => filters.role ? `${t('role')}: ${filters.role}` : null,
       handleClose: () => setFilters(prev => ({ ...prev, role: undefined }))
-    },
-    {
-      type: 'custom',
-      label: t('countingPost'),
-      render: () => filters.countingPost ? `${t('countingPost')}: ${t(filters.countingPost)}` : null,
-      handleClose: () => setFilters(prev => ({ ...prev, countingPost: undefined }))
     }
   ];
 
-  const appliedFiltersCount = countDefinedProps(filters, [['role'], ['countingPost']]);
+  const appliedFiltersCount = countDefinedProps(filters, [['role']]);
 
   return (
     <div className='page-without-header h-screen bg-[#F4F4F6] p-6 md:pt-24'>

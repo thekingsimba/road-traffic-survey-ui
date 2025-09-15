@@ -22,7 +22,6 @@ export type User = {
     phone?: string;
     picture?: string;
     role?: string | { name: string };
-    countingPost?: 'start' | 'end';
     createdAt?: string;
     updatedAt?: string;
 }
@@ -46,7 +45,6 @@ export type UpdateUserRequest = {
 export type UserFilter = {
     search?: string;
     role?: string;
-    countingPost?: 'start' | 'end';
 }
 
 export type PaginatedUsersResponse = {
