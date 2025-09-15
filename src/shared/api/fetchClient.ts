@@ -115,11 +115,19 @@ export const apiCallHandler = ky.extend({
   timeout: 15000,
   hooks: {
     beforeRequest: [
-      (request) => clientIdMiddleWare(request),
-      (request) => authTokenMiddleWare(request, useUserStore.getState)
+      (request) => {
+        console.log('🔥 API Request:', request.method, request.url);
+        console.log('🔥 Request headers:', Object.fromEntries(request.headers.entries()));
+        clientIdMiddleWare(request);
+        authTokenMiddleWare(request, useUserStore.getState);
+        console.log('🔥 Request headers after middleware:', Object.fromEntries(request.headers.entries()));
+      }
     ],
     afterResponse: [
-      (request, _, response) => refreshTokenMiddleWare(request, response, useUserStore.getState),
+      (request, _, response) => {
+        console.log('🔥 API Response:', response.status, request.url);
+        refreshTokenMiddleWare(request, response, useUserStore.getState);
+      },
     ],
   }
 });

@@ -221,7 +221,10 @@ export const Grid: FC<GridProps> = ({
                             </button>
                           ) : (
                             <DropdownMenu
-                              handleClick={(_, option) => onActionClick?.(option)}
+                              handleClick={(_, option) => {
+                                console.log('🔥 Grid DropdownMenu handleClick called with:', option);
+                                onActionClick?.(option);
+                              }}
                               classNames={{
                                 trigger: 'min-h-[20px] inline-block align-middle',
                                 portalWrapper: 'rounded-xl border-[#EBECF0] p-2',

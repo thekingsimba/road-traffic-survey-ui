@@ -48,6 +48,7 @@ export const DropdownMenu = <T extends { toString(): string }>({
   const handleOptionClick = async (
     e: MouseEvent<HTMLLIElement> | KeyboardEvent<HTMLLIElement>,
     item: DropdownMenuOption<T>) => {
+      console.log('🔥 DropdownMenu handleOptionClick called with:', item);
       if (!item.disableHideOnClick) {
         setIsOpen(false);
       }

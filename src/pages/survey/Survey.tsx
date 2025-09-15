@@ -13,6 +13,7 @@ import type { DropdownMenuOption } from '@components/DropdownMenu/types';
 import { FiltersBubbles, type BubbleConfig } from '@components/Grid/parts/FiltersBubbles';
 import { countDefinedProps } from '@shared/utils/countDefinedProps';
 import { useUserType } from '@shared/hooks/useUserType';
+import { useUserStore } from '@shared/stores/userStore';
 import { BaseModal } from '@components/BaseModal';
 import { Button } from '@components/Button';
 import { Typography } from '@components/Typography';
@@ -22,6 +23,14 @@ export const SurveyComponent = () => {
   const { t } = useTranslation();
   const { isAdmin } = useUserType();
   const [, setLocation] = useLocation();
+  const { isAuthorized, accessToken, user } = useUserStore();
+
+  // Debug user state
+  console.log('🔥 SurveyComponent - isAdmin:', isAdmin);
+  console.log('🔥 SurveyComponent - isAuthorized:', isAuthorized);
+  console.log('🔥 SurveyComponent - accessToken:', accessToken ? 'present' : 'missing');
+  console.log('🔥 SurveyComponent - user:', user);
+  console.log('🔥 SurveyComponent - localStorage user data:', localStorage.getItem('user-storage'));
   const [data, setData] = useState<Survey[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,8 +96,10 @@ export const SurveyComponent = () => {
   ];
 
   const fetchData = useCallback(async () => {
+    console.log('🔥 fetchData called');
     setLoading(true);
     try {
+      console.log('🔥 Fetching surveys with params:', { page: currentPage, limit: resultsPerPage, search: searchTerm, filter: filters });
       const response = await getSurveys({
         page: currentPage,
         limit: resultsPerPage,
@@ -96,19 +107,46 @@ export const SurveyComponent = () => {
         filter: filters,
       });
 
-      console.log('Fetched survey data:', response.results?.docs);
+      console.log('🔥 Fetched survey data:', response.results?.docs);
+      console.log('🔥 Raw API response:', response);
+      console.log('🔥 First survey object:', response.results?.docs?.[0]);
+      console.log('🔥 Response structure:', {
+        hasResults: !!response.results,
+        hasDocs: !!response.results?.docs,
+        docsLength: response.results?.docs?.length,
+        firstDocKeys: response.results?.docs?.[0] ? Object.keys(response.results.docs[0]) : 'no first doc'
+      });
       setData(response.results?.docs ?? []);
       setTotalPages(response.results?.totalPages ?? 1);
     } catch (error) {
-      console.error('Failed to fetch Surveys:', error);
+      console.error('🔥 Failed to fetch Surveys:', error);
     } finally {
       setLoading(false);
     }
   }, [currentPage, resultsPerPage, searchTerm, filters]);
 
   useEffect(() => {
+    console.log('🔥 useEffect triggered - calling fetchData');
     fetchData();
   }, [searchTerm, currentPage, resultsPerPage, filters, fetchData]);
+
+  // Test API call directly
+  useEffect(() => {
+    const testApiCall = async () => {
+      try {
+        console.log('🔥 Testing API call directly...');
+        const response = await fetch('http://localhost:5000/api/surveys?page=1&limit=10');
+        console.log('🔥 Direct API response status:', response.status);
+        const data = await response.json();
+        console.log('🔥 Direct API response data:', data);
+      } catch (error) {
+        console.error('🔥 Direct API call error:', error);
+      }
+    };
+
+    // Run test after a short delay
+    setTimeout(testApiCall, 1000);
+  }, []);
 
   // Add polling for real-time updates
   useEffect(() => {
@@ -191,7 +229,11 @@ export const SurveyComponent = () => {
     </div>
   ) : null;
 
-            const transformedData = data.map((item) => {
+  const transformedData = data.map((item, index) => {
+    console.log(`🔥 Transforming survey ${index}:`, item);
+    console.log(`🔥 Survey ${index} id field:`, item.id);
+    console.log(`🔥 Survey ${index} _id field:`, item._id);
+
               const startPointAgentValue = (() => {
                 if (typeof item.startPointAgent === 'object' && item.startPointAgent?.full_name) {
                   return item.startPointAgent.full_name;
@@ -212,8 +254,8 @@ export const SurveyComponent = () => {
                 return '-';
               })();
 
-            return {
-              id: item.id ?? '',
+    const transformedItem = {
+      id: item.id ?? item._id ?? '',
               name: item.name ?? '',
               startPoint: item.startPoint ?? '',
               endPoint: item.endPoint ?? '',
@@ -223,17 +265,41 @@ export const SurveyComponent = () => {
               scheduledStartTime: item.scheduledStartTime ? new Date(item.scheduledStartTime).toLocaleString() : '-',
               scheduledEndTime: item.scheduledEndTime ? new Date(item.scheduledEndTime).toLocaleString() : '-',
             };
+
+    console.log(`🔥 Transformed survey ${index}:`, transformedItem);
+    return transformedItem;
           });
 
   const handleActionClick = (option: DropdownMenuOption<string>) => {
-    const survey = data.find((s) => s.id === option.value);
-    if (!survey) return;
+    console.log('🔥 Action clicked:', option);
+    console.log('🔥 Available surveys in data:', data);
+    console.log('🔥 Looking for survey with ID:', option.value);
+
+    // Try to find survey in data array
+    let survey = data.find((s) => s.id === option.value);
+    console.log('🔥 Found survey in data:', survey);
+
+    // If not found in data array, create a minimal survey object with just the ID
+    if (!survey && option.value) {
+      console.log('🔥 Survey not found in data, creating minimal survey object');
+      survey = { id: option.value } as Survey;
+    }
+
+    if (!survey || !survey.id) {
+      console.error('🔥 Survey not found for ID:', option.value);
+      console.error('🔥 Available survey IDs:', data.map(s => s.id));
+      return;
+    }
+
+    console.log('🔥 Using survey object:', survey);
 
     switch (option.actionId) {
       case 'edit':
+        console.log('🔥 Opening edit modal');
         setSurveyToEdit(survey);
         break;
       case 'archive':
+        console.log('🔥 Opening archive confirmation');
         setConfirmModal({
           isOpen: true,
           type: 'archive',
@@ -241,9 +307,11 @@ export const SurveyComponent = () => {
         });
         break;
       case 'export':
+        console.log('🔥 Starting CSV export');
         handleExportCsv(survey);
         break;
       case 'delete':
+        console.log('🔥 Opening delete confirmation');
         setConfirmModal({
           isOpen: true,
           type: 'delete',
@@ -251,19 +319,33 @@ export const SurveyComponent = () => {
         });
         break;
       default:
+        console.log('🔥 Unknown action:', option.actionId);
         break;
     }
   };
 
   const handleExportCsv = async (survey: Survey) => {
-    if (isActionLoading || !survey.id) return;
+    console.log('🔥 handleExportCsv called with survey:', survey);
+    console.log('🔥 isActionLoading state:', isActionLoading);
+    console.log('🔥 survey.id:', survey.id);
 
+    if (isActionLoading || !survey.id) {
+      console.log('🔥 Export cancelled - isActionLoading:', isActionLoading, 'survey.id:', survey.id);
+      return;
+    }
+
+    console.log('🔥 Starting CSV export for survey ID:', survey.id);
+    console.log('🔥 Setting isActionLoading to true');
     setIsActionLoading(true);
+
     try {
-      await exportSurveyCsv(survey.id);
+      console.log('🔥 Calling exportSurveyCsv function...');
+      const result = await exportSurveyCsv(survey.id);
+      console.log('🔥 CSV export successful:', result);
     } catch (error) {
-      console.error('Failed to export survey CSV:', error);
+      console.error('🔥 Failed to export survey CSV:', error);
     } finally {
+      console.log('🔥 Setting isActionLoading to false');
       setIsActionLoading(false);
     }
   };

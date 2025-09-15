@@ -19,6 +19,7 @@ export const getSurveys = async (params: {
   search?: string;
   filter?: SurveyFilter;
 }): Promise<PaginatedSurveysResponse> => {
+  console.log('🔥 getSurveys called with params:', params);
   const queryParams = new URLSearchParams();
   queryParams.append('page', params.page.toString());
   queryParams.append('limit', params.limit.toString());
@@ -29,7 +30,17 @@ export const getSurveys = async (params: {
     queryParams.append('status', params.filter.status);
   }
 
-  return await apiCallHandler.get<PaginatedSurveysResponse>(`surveys?${queryParams.toString()}`).json();
+  const url = `surveys?${queryParams.toString()}`;
+  console.log('🔥 getSurveys making request to:', url);
+
+  try {
+    const response = await apiCallHandler.get<PaginatedSurveysResponse>(url).json();
+    console.log('🔥 getSurveys response:', response);
+    return response;
+  } catch (error) {
+    console.error('🔥 getSurveys error:', error);
+    throw error;
+  }
 };
 
 // Get survey by ID
@@ -49,21 +60,46 @@ export const updateSurvey = async (surveyData: UpdateSurveyRequest): Promise<Sur
 
 // Delete a survey
 export const deleteSurvey = async (id: string): Promise<{ message: string; error: boolean; code: number }> => {
-  return await apiCallHandler.delete<{ message: string; error: boolean; code: number }>(`surveys/${id}`).json();
+  console.log('🔥 deleteSurvey called with id:', id);
+  try {
+    const result = await apiCallHandler.delete<{ message: string; error: boolean; code: number }>(`surveys/${id}`).json();
+    console.log('🔥 deleteSurvey completed with result:', result);
+    return result;
+  } catch (error) {
+    console.error('🔥 deleteSurvey error:', error);
+    throw error;
+  }
 };
 
 // Archive a survey (using end survey endpoint which sets status to archived)
 export const archiveSurvey = async (id: string): Promise<SurveyResponse> => {
-  return await apiCallHandler.put<SurveyResponse>(`surveys/${id}/end`).json();
+  console.log('🔥 archiveSurvey called with id:', id);
+  try {
+    const result = await apiCallHandler.put<SurveyResponse>(`surveys/${id}/end`).json();
+    console.log('🔥 archiveSurvey completed with result:', result);
+    return result;
+  } catch (error) {
+    console.error('🔥 archiveSurvey error:', error);
+    throw error;
+  }
 };
 
 // Export survey results as CSV
 export const exportSurveyCsv = async (id: string): Promise<string> => {
-  const { downloadFile } = await import('@shared/api/downloadFile');
-  return await downloadFile({
-    url: `surveys/${id}/export`,
-    method: 'get'
-  });
+  console.log('🔥 exportSurveyCsv called with id:', id);
+  try {
+    const { downloadFile } = await import('@shared/api/downloadFile');
+    console.log('🔥 downloadFile imported successfully');
+    const result = await downloadFile({
+      url: `surveys/${id}/export`,
+      method: 'get'
+    });
+    console.log('🔥 downloadFile completed with result:', result);
+    return result;
+  } catch (error) {
+    console.error('🔥 exportSurveyCsv error:', error);
+    throw error;
+  }
 };
 
 // Start a survey
