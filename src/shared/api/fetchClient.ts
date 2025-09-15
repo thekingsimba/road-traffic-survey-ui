@@ -1,11 +1,19 @@
 import { envs } from '@shared/envs';
 import { useUserStore } from '@shared/stores/userStore';
+import { forceLogout } from '@shared/utils/authUtils';
 import type { Options } from 'ky';
 import ky from 'ky';
 import type { RefreshTokenRequest, TokenResponse } from './typesExtracted';
 import type { AuthStoreBase } from '@shared/stores/types';
 
-const logoutAndRedirect = (logout: () => void, redirectTo = '/login') => {
+const logoutAndRedirect = (logout: () => void, redirectTo = '/login', reason?: string) => {
+  // Show notification to user before logout
+  if (reason) {
+    alert(`Session expired: ${reason}. Please log in again.`);
+  } else {
+    alert('Your session has expired. Please log in again.');
+  }
+
   logout();
   window.location.href = redirectTo;
 };
@@ -40,13 +48,19 @@ const refreshTokenMiddleWare = async (
   authStoreAccessor: () => AuthStoreBase) => {
     const currentUser = authStoreAccessor();
 
+  // Handle authentication errors
     if (response.status === 401) {
       try {
         const errorBody = await response?.clone()?.json();
 
-        if (errorBody?.error === 'force_logout') {
-          logoutAndRedirect(currentUser.logout);
-        } else {
+        // Check if it's a force logout or invalid token
+        if (errorBody?.error === 'force_logout' || errorBody?.message?.includes('Invalid login token')) {
+          forceLogout('Invalid or expired token');
+          return;
+        }
+
+        // Try to refresh token if we have a refresh token
+        if (currentUser.refreshToken) {
           const refreshRequestOptions: Options = {
             prefixUrl: envs.VITE_API_BASE_URL,
             json: { refreshToken: currentUser.refreshToken } as RefreshTokenRequest,
@@ -54,18 +68,41 @@ const refreshTokenMiddleWare = async (
             hooks: { beforeRequest: [clientIdMiddleWare] }
           };
 
-          const newTokens = await ky.post<TokenResponse>('auth/refresh-token', refreshRequestOptions).json();
-          currentUser.updateAccessToken(newTokens.accessToken as string);
+          try {
+            const newTokens = await ky.post<TokenResponse>('auth/refresh-token', refreshRequestOptions).json();
+            currentUser.updateAccessToken(newTokens.accessToken as string);
 
-          request.headers.set('Authorization', `Bearer ${newTokens.accessToken}`);
+            request.headers.set('Authorization', `Bearer ${newTokens.accessToken}`);
 
-          return ky(request);
+            return ky(request);
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          forceLogout('Token refresh failed');
+          return;
+        }
+      } else {
+        // No refresh token available, logout immediately
+        forceLogout('No refresh token available');
+        return;
+      }
+    } catch (e) {
+      console.error('Authentication error handling failed:', e);
+      forceLogout('Authentication error');
+      return;
+    }
+  }
+
+  // Handle forbidden access (403)
+  if (response.status === 403) {
+    try {
+      const errorBody = await response?.clone()?.json();
+      if (errorBody?.message?.includes('Access denied') || errorBody?.message?.includes('permission')) {
+        alert('Access denied: You do not have permission to perform this action.');
         }
       } catch (e) {
-        console.error(e);
-        logoutAndRedirect(currentUser.logout);
+        console.error('Error parsing 403 response:', e);
       }
-  }
+    }
 
   // for server side errors. Status code starting by 5...
   redirectToErrorPage(response.status);

@@ -2,15 +2,27 @@ import { useEffect } from 'react';
 import { ROUTES } from '@app/router/routes';
 import LoginPage from '@pages/login';
 import { useUserStore } from '@shared/stores/userStore';
+import { getUserType } from '@shared/utils/userType';
 import { Layout } from '@widgets/Layout';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 
 export const Router = () => {
   const isAuthorized = useUserStore(state => state.isAuthorized);
+  const user = useUserStore(state => state.user);
   const [location, setLocation] = useLocation();
 
   const availableRoutes = ROUTES.filter(route => {
-    if (route.authorizationRequired) return isAuthorized;
+    if (route.authorizationRequired) {
+      if (!isAuthorized) return false;
+
+      // Check role-based access if allowedRoles is specified
+      if (route.allowedRoles && route.allowedRoles.length > 0) {
+        const userType = getUserType(user);
+        return route.allowedRoles.includes(userType);
+      }
+
+      return true;
+    }
     return route;
   });
 
@@ -21,8 +33,21 @@ export const Router = () => {
 
     if (!isAuthorized && !isPublicRoute) {
       setLocation('/login');
+      return;
     }
-  }, [isAuthorized, location, setLocation]);
+
+    // Check if user has access to the current route based on roles
+    if (isAuthorized) {
+      const currentRoute = ROUTES.find(r => r.path === location);
+      if (currentRoute?.allowedRoles && currentRoute.allowedRoles.length > 0) {
+        const userType = getUserType(user);
+        if (!currentRoute.allowedRoles.includes(userType)) {
+          // Redirect to home page if user doesn't have access to this route
+          setLocation('/');
+        }
+      }
+    }
+  }, [isAuthorized, location, setLocation, user]);
 
   return (
     <WouterRouter>

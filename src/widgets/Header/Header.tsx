@@ -2,6 +2,7 @@ import type { DropdownMenuOption } from '@components/DropdownMenu';
 import { DropdownMenu } from '@components/DropdownMenu';
 import { Icon } from '@components/Icon';
 import { Typography } from '@components/Typography';
+import { LanguageSwitcher } from '@components/LanguageSwitcher';
 import { useUserStore } from '@shared/stores/userStore';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -46,35 +47,39 @@ export const Header = () => {
           </div>
         </div>
 
-        <WithAuthorization>
-          <DropdownMenu
-            placement='bottom'
-            view={
-              <>
-                <Icon id='user' className='size-4 text-secondary-low' aria-hidden='true' />
-                <span
-                  className='inline-block max-w-[180px] overflow-hidden truncate whitespace-nowrap align-middle text-[15px] sm:max-w-[220px] md:max-w-[250px] lg:max-w-[300px]'
-                  title={user?.full_name || ''}
-                >
-                  {user?.full_name || ''}
-                </span>
-              </>}
-            handleClick={(_, option) => handleuserMenuOptionClick(option)}
-            classNames={{
-              trigger: 'space-x-2 bg-[#F9F9FA] min-h-9 px-2 rounded-3xl mr-6 shadow-[inset_0px_-1px_3px_-1px_#00000012]',
-              portalWrapper: 'rounded-xl border-[#EBECF0] p-2',
-              optionWrapper: 'px-4 min-h-10 rounded-md'
-            }}
-            options={CURRENT_USER_MENU_OPTIONS.map(item => ({
-              ...item,
-              view: (
-                <div className='group flex min-h-10 w-full items-center justify-start space-x-2'>
-                  <Icon id={item.iconId} className={twMerge('group-hover:text-primary text-secondary', item.iconClassName)} aria-hidden='true' />
-                  <Typography text={t(item.label)} className='text-[13px] capitalize text-secondary group-hover:text-primary' />
-                </div>)
-            }))}
-          />
-        </WithAuthorization>
+        <div className="flex items-center space-x-4">
+          <LanguageSwitcher />
+
+          <WithAuthorization>
+            <DropdownMenu
+              placement='bottom'
+              view={
+                <>
+                  <Icon id='user' className='size-4 text-secondary-low' aria-hidden='true' />
+                  <span
+                    className='inline-block max-w-[180px] overflow-hidden truncate whitespace-nowrap align-middle text-[15px] sm:max-w-[220px] md:max-w-[250px] lg:max-w-[300px]'
+                    title={user?.full_name || ''}
+                  >
+                    {user?.full_name || ''}
+                  </span>
+                </>}
+              handleClick={(_, option) => handleuserMenuOptionClick(option)}
+              classNames={{
+                trigger: 'space-x-2 bg-[#F9F9FA] min-h-9 px-2 rounded-3xl mr-6 shadow-[inset_0px_-1px_3px_-1px_#00000012]',
+                portalWrapper: 'rounded-xl border-[#EBECF0] p-2',
+                optionWrapper: 'px-4 min-h-10 rounded-md'
+              }}
+              options={CURRENT_USER_MENU_OPTIONS.map(item => ({
+                ...item,
+                view: (
+                  <div className='group flex min-h-10 w-full items-center justify-start space-x-2'>
+                    <Icon id={item.iconId} className={twMerge('group-hover:text-primary text-secondary', item.iconClassName)} aria-hidden='true' />
+                    <Typography text={t(item.label)} className='text-[13px] capitalize text-secondary group-hover:text-primary' />
+                  </div>)
+              }))}
+            />
+          </WithAuthorization>
+        </div>
 
         <LogoutModal
           isOpen={isLogoutModalOpen}

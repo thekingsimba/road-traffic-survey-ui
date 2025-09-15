@@ -7,6 +7,7 @@ type UserStore = {
   user?: UserDto | null;
   signInWithCredentials: (authResponse: AuthUserResponse) => void;
   updateUserData: (newUser: Partial<UserDto>) => void;
+  isTokenValid: () => boolean;
 } & AuthStoreBase
 
 const defaultData: Omit<UserStore, 'signInWithCredentials' | 'logout' | 'updateAccessToken' | 'updateUserData' > = {
@@ -48,6 +49,10 @@ export const useUserStore = create<UserStore>()(
               ...newUser,
             } : undefined,
           }));
+        },
+        isTokenValid: () => {
+          const state = useUserStore.getState();
+          return !!(state.accessToken && state.isAuthorized && state.user);
         },
       }),
       {

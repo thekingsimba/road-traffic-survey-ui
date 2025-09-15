@@ -4,6 +4,7 @@ import { Typography } from '@components/Typography';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'wouter';
+import { useUserType } from '@shared/hooks/useUserType';
 
 
 export type SmallCardPropsType = {
@@ -15,31 +16,63 @@ export type SmallCardPropsType = {
 };
 
 
-const smallCardData: SmallCardPropsType[] = [
-  {
-    iconId: 'user-group-icon',
-    cardTitle: 'survey',
-    description: 'setupAndManageSurveys',
-    navigateToUrl: '/surveys',
-  },
-  {
-    iconId: 'user-group-icon',
-    cardTitle: 'users',
-    description: 'createAndManageUser',
-    navigateToUrl: '/users',
-  },
-];
+const getSmallCardData = (isAdmin: boolean): SmallCardPropsType[] => {
+  const baseCards: SmallCardPropsType[] = [
+    {
+      iconId: 'user-group-icon',
+      cardTitle: 'survey',
+      description: 'setupAndManageSurveys',
+      navigateToUrl: '/surveys',
+    },
+  ];
+
+  // Only show users management for admins
+  if (isAdmin) {
+    baseCards.push({
+      iconId: 'user-group-icon',
+      cardTitle: 'users',
+      description: 'createAndManageUser',
+      navigateToUrl: '/users',
+    });
+  }
+
+  return baseCards;
+};
 
 export const HomePage = () => {
+  const { t } = useTranslation();
+  const { userType, isAdmin, isAgent } = useUserType();
 
   return (
     <div className='page-without-header flex min-h-screen flex-col justify-center bg-[#F4F4F6] p-5 md:pt-24'>
       <div>
-        <div className='m-auto mb-10 w-[285px] text-center text-[40px] font-[700] leading-[48px]  -tracking-[0.08] text-[#0A0C11] md:mb-24 lg:text-[52px] lg:leading-[64px] '>Home Page</div>
+        <div className='m-auto mb-10 w-[285px] text-center text-[40px] font-[700] leading-[48px] -tracking-[0.08] text-[#0A0C11] md:mb-24 lg:text-[52px] lg:leading-[64px]'>
+          {t('home')}
+        </div>
+
+        {/* User Type Display */}
+        <div className='m-auto mb-6 w-[100%] rounded-xl border-[1px] border-[#DDDFE4] bg-[#FFF] p-4 md:w-[80%] lg:w-[816px]'>
+          <Typography
+            text={`${t('welcomeLoggedInAs')} ${userType}`}
+            className='text-center text-lg font-medium text-[#166298]'
+          />
+          {isAdmin && (
+            <Typography
+              text={t('adminPrivileges')}
+              className='mt-2 text-center text-sm text-[#F49E15]'
+            />
+          )}
+          {isAgent && (
+            <Typography
+              text={t('agentPrivileges')}
+              className='mt-2 text-center text-sm text-[#659FDC]'
+            />
+          )}
+        </div>
 
         <div className='m-auto flex min-h-[200px] w-[100%] flex-col justify-center rounded-xl border-[1px] border-[#DDDFE4] bg-[#FFF] p-5 md:w-[80%] lg:w-[816px]'>
           <div className='flex flex-col justify-between gap-4 md:flex-row'>
-            {smallCardData.map((card, index) => (
+            {getSmallCardData(isAdmin).map((card, index) => (
               <SmallCard key={index + card.cardTitle} {...card} />
             ))}
           </div>

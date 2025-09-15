@@ -5,7 +5,7 @@ import { Input } from '@components/Input/Input';
 
 import { Typography } from '@components/Typography';
 import { useTranslation } from 'react-i18next';
-import { updateSurvey } from '../api';
+import { updateSurvey, getAgents } from '../api';
 import type { Survey, UpdateSurveyRequest } from '@shared/api/data.models';
 import { DateTimePicker } from '@components/DateTimePicker/DateTimePicker';
 
@@ -19,6 +19,7 @@ type EditSurveyModalProps = {
 export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSurveyModalProps) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const [agents, setAgents] = useState<Array<{ id: string; full_name: string; email: string }>>([]);
   const [formData, setFormData] = useState<UpdateSurveyRequest>({
     id: survey.id,
     name: survey.name,
@@ -30,6 +31,26 @@ export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSur
     endPointAgent: typeof survey.endPointAgent === 'object' ? survey.endPointAgent.id : survey.endPointAgent || '',
     status: survey.status
   });
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await getAgents();
+        if (response.results?.docs && Array.isArray(response.results.docs)) {
+          setAgents(response.results.docs);
+        } else {
+          setAgents([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch agents:', error);
+        setAgents([]);
+      }
+    };
+
+    if (isOpen) {
+      fetchAgents();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (survey) {
@@ -68,6 +89,7 @@ export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSur
     try {
       await updateSurvey(formData);
       onComplete();
+      onClose();
     } catch (error) {
       console.error('Failed to update survey:', error);
     } finally {
@@ -96,7 +118,7 @@ export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSur
       isOpen={isOpen}
       onCloseHandler={handleClose}
       header={<Typography tag="h2" text={t('editSurvey')} weight="bold" className="text-[22px]" />}
-      className="w-[600px]"
+      className="w-[600px] max-h-[80vh]"
     >
       <div className="p-6">
         <div className="mb-6">
@@ -167,22 +189,38 @@ export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSur
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-[13px] text-secondary mb-2 block">{t('startPointAgent')}</label>
-              <Input
+              <select
                 value={formData.startPointAgent || ''}
-                onChange={(e) => handleInputChangeEvent('startPointAgent', e)}
-                placeholder={t('enterStartPointAgent')}
-              />
+                onChange={(e) => handleInputChange('startPointAgent', e.target.value)}
+                className="h-12 w-full rounded-xl border border-gray-300 px-3 text-[15px]"
+                aria-label={t('startPointAgent')}
+              >
+                <option value="">{t('selectStartPointAgent')}</option>
+                {Array.isArray(agents) && agents.map((agent) => (
+                  <option key={agent.id} value={agent.id}>
+                    {agent.full_name} ({agent.email})
+                  </option>
+                ))}
+              </select>
               <p className="text-[12px] text-gray-500 mt-1">{t('startPointAgentHelper')}</p>
             </div>
 
             <div>
               <label className="text-[13px] text-secondary mb-2 block">{t('endPointAgent')}</label>
-              <Input
+              <select
                 value={formData.endPointAgent || ''}
-                placeholder={t('enterEndPointAgent')}
-                onChange={(e) => handleInputChangeEvent('endPointAgent', e)}
-              />
-              <p className="text-[12px] text-gray-2 block">{t('endPointAgentHelper')}</p>
+                onChange={(e) => handleInputChange('endPointAgent', e.target.value)}
+                className="h-12 w-full rounded-xl border border-gray-300 px-3 text-[15px]"
+                aria-label={t('endPointAgent')}
+              >
+                <option value="">{t('selectEndPointAgent')}</option>
+                {Array.isArray(agents) && agents.map((agent) => (
+                  <option key={agent.id} value={agent.id}>
+                    {agent.full_name} ({agent.email})
+                  </option>
+                ))}
+              </select>
+              <p className="text-[12px] text-gray-500 mt-1">{t('endPointAgentHelper')}</p>
             </div>
           </div>
 

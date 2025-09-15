@@ -75,7 +75,8 @@ export type UserResponse = {
 
 // Survey Management Types based on backend schema
 export type Survey = {
-    id: string;
+    id?: string;
+    _id?: string; // MongoDB ObjectId
     name: string;
     startPoint: string;
     endPoint: string;
@@ -83,9 +84,13 @@ export type Survey = {
     scheduledEndTime: string;
     actualStartTime?: string;
     actualEndTime?: string;
-    status: 'active' | 'inactive' | 'archived';
+    status: 'active' | 'inactive' | 'archived' | 'terminated';
+    effectiveStatus?: 'active' | 'inactive' | 'archived' | 'terminated'; // Computed status based on time window
     motorcycleCount: number;
     carCount: number;
+    truckCount: number;
+    busCount: number;
+    pedestrianCount: number;
     startPointAgent?: string | { id: string; full_name: string; email: string; phone: string };
     endPointAgent?: string | { id: string; full_name: string; email: string; phone: string };
     createdBy: string | { id: string; full_name: string; email: string };
@@ -142,5 +147,32 @@ export type SurveyResponse = {
     error: boolean;
     code: number;
     results: Survey;
+}
+
+// Counting Data Types
+export type CountingData = {
+    motorcycle: number;
+    car: number;
+    truck: number;
+    bus: number;
+    pedestrian: number;
+}
+
+export type SubmitCountingRequest = {
+    surveyId: string;
+    counts: CountingData;
+    countingPost: 'start' | 'end';
+}
+
+export type SubmitCountingResponse = {
+    message: string;
+    error: boolean;
+    code: number;
+    results: {
+        surveyId: string;
+        counts: CountingData;
+        countingPost: 'start' | 'end';
+        submittedAt: string;
+    };
 }
 

@@ -2,6 +2,7 @@ import { Typography } from '@components/Typography';
 import { t } from 'i18next';
 import { Link, useLocation } from 'wouter';
 import { WithAuthorization } from '@widgets/WithAuthorization';
+import { UserTypeGuard } from '@shared/components/UserTypeGuard';
 import { twMerge } from 'tailwind-merge';
 
 function getTriggerClass(path: string, currentPath: string) {
@@ -27,25 +28,19 @@ export const NavigationPanel = () => {
           />
         </Link>
 
-        <Link to='/users' className={getTriggerClass('/users', location)}>
-          <Typography
-            text={t('users')}
-            className='truncate text-inherit first-letter:capitalize'
-            weight='bold'
-          />
-        </Link>
+        <UserTypeGuard allowedTypes={['admin']}>
+          <Link to='/users' className={getTriggerClass('/users', location)}>
+            <Typography
+              text={t('users')}
+              className='truncate text-inherit first-letter:capitalize'
+              weight='bold'
+            />
+          </Link>
+        </UserTypeGuard>
 
         <Link to='/surveys' className={getTriggerClass('/surveys', location)}>
           <Typography
             text={t('surveys')}
-            className='truncate text-inherit first-letter:capitalize'
-            weight='bold'
-          />
-        </Link>
-
-        <Link to='/clients' className={getTriggerClass('/clients', location)}>
-          <Typography
-            text={t('clients')}
             className='truncate text-inherit first-letter:capitalize'
             weight='bold'
           />

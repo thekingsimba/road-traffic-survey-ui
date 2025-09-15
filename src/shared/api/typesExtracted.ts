@@ -15,7 +15,10 @@ export type AuthUserResponse = {
             email: string;
             full_name: string;
             phone?: string;
-            role?: string;
+            role?: {
+                id: string;
+                name: string;
+            } | null;
         };
     };
 };
@@ -25,7 +28,10 @@ export type UserDto = {
     email: string;
     full_name: string;
     phone?: string;
-    role?: string;
+    role?: {
+        id: string;
+        name: string;
+    } | null;
 };
 
 export type RefreshTokenRequest = {

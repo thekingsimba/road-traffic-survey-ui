@@ -6,6 +6,7 @@ const ResetPassword = lazy(() => import('@pages/reset-password'));
 const Home = lazy(() => import('@pages/home'));
 const User = lazy(() => import('@pages/user'));
 const Survey = lazy(() => import('@pages/survey'));
+const Counting = lazy(() => import('@pages/counting'));
 const ErrorsPage = lazy(() => import('@pages/errors'));
 
 export const ROUTES: Route[] = [
@@ -31,10 +32,16 @@ export const ROUTES: Route[] = [
     path: '/users',
     content: User,
     authorizationRequired: true,
+    allowedRoles: ['admin'],
   },
   {
     path: '/surveys',
     content: Survey,
+    authorizationRequired: true,
+  },
+  {
+    path: '/counting',
+    content: Counting,
     authorizationRequired: true,
   },
   {

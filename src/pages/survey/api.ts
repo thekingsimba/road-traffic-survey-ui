@@ -4,7 +4,10 @@ import type {
   UpdateSurveyRequest,
   SurveyFilter,
   PaginatedSurveysResponse,
-  SurveyResponse
+  SurveyResponse,
+  SubmitCountingRequest,
+  SubmitCountingResponse,
+  CountingData
 } from '@shared/api/data.models';
 
 
@@ -47,6 +50,20 @@ export const updateSurvey = async (surveyData: UpdateSurveyRequest): Promise<Sur
 // Delete a survey
 export const deleteSurvey = async (id: string): Promise<{ message: string; error: boolean; code: number }> => {
   return await apiCallHandler.delete<{ message: string; error: boolean; code: number }>(`surveys/${id}`).json();
+};
+
+// Archive a survey (using end survey endpoint which sets status to archived)
+export const archiveSurvey = async (id: string): Promise<SurveyResponse> => {
+  return await apiCallHandler.put<SurveyResponse>(`surveys/${id}/end`).json();
+};
+
+// Export survey results as CSV
+export const exportSurveyCsv = async (id: string): Promise<string> => {
+  const { downloadFile } = await import('@shared/api/downloadFile');
+  return await downloadFile({
+    url: `surveys/${id}/export`,
+    method: 'get'
+  });
 };
 
 // Start a survey
@@ -133,4 +150,34 @@ export const getAgents = async (): Promise<{
       hasNextPage: boolean;
     };
   }>('users/list?role=agent').json();
+};
+
+// Submit counting data for a survey
+export const submitCountingData = async (countingData: SubmitCountingRequest): Promise<SubmitCountingResponse> => {
+  return await apiCallHandler.post<SubmitCountingResponse>('surveys/counting/submit', { json: countingData }).json();
+};
+
+// Get counting data for a survey
+export const getCountingData = async (surveyId: string): Promise<{
+  message: string;
+  error: boolean;
+  code: number;
+  results: {
+    surveyId: string;
+    startPointCounts: CountingData;
+    endPointCounts: CountingData;
+    lastUpdated: string;
+  };
+}> => {
+  return await apiCallHandler.get<{
+    message: string;
+    error: boolean;
+    code: number;
+    results: {
+      surveyId: string;
+      startPointCounts: CountingData;
+      endPointCounts: CountingData;
+      lastUpdated: string;
+    };
+  }>(`surveys/${surveyId}/counting`).json();
 };
