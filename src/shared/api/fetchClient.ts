@@ -6,17 +6,6 @@ import ky from 'ky';
 import type { RefreshTokenRequest, TokenResponse } from './typesExtracted';
 import type { AuthStoreBase } from '@shared/stores/types';
 
-const logoutAndRedirect = (logout: () => void, redirectTo = '/login', reason?: string) => {
-  // Show notification to user before logout
-  if (reason) {
-    alert(`Session expired: ${reason}. Please log in again.`);
-  } else {
-    alert('Your session has expired. Please log in again.');
-  }
-
-  logout();
-  window.location.href = redirectTo;
-};
 
 const redirectToErrorPage = (statusCode: number) => {
   const statusCodeHandled = [403, 500, 502, 503, 504];

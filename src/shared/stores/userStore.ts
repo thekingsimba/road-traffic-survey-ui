@@ -15,6 +15,7 @@ const defaultData: Omit<UserStore, 'signInWithCredentials' | 'logout' | 'updateA
   user: undefined,
   accessToken: undefined,
   refreshToken: undefined,
+  isTokenValid: () => false,
 };
 
 export const useUserStore = create<UserStore>()(

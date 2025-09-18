@@ -68,7 +68,7 @@ export const Grid: FC<GridProps> = ({
   };
 
   const renderPageNumbers = () => {
-    const pages = [];
+    const pages: (number | string)[] = [];
     if (totalPages <= 10) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
@@ -220,7 +220,7 @@ export const Grid: FC<GridProps> = ({
                               <Icon id={actions[0].iconId} className={twMerge('size-4', actions[0].iconClassName)} />
                             </button>
                           ) : (
-                            <DropdownMenu
+                              <DropdownMenu<string>
                               handleClick={(_, option) => {
                                 console.log('🔥 Grid DropdownMenu handleClick called with:', option);
                                 onActionClick?.(option);

@@ -1,5 +1,5 @@
 import { useUserStore } from '@shared/stores/userStore';
-import { getUserType, isAdmin, isAgent, isRegularUser, hasElevatedPrivileges, type UserType } from '@shared/utils/userType';
+import { getUserType, isAdmin, isAgent, isRegularUser, hasElevatedPrivileges } from '@shared/utils/userType';
 
 /**
  * Custom hook that provides user type information and utility functions

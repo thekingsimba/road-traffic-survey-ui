@@ -9,7 +9,7 @@ import { Typography } from '@components/Typography';
 import { Icon } from '@components/Icon';
 import { updateUser } from '../api';
 import { useUserStore } from '@shared/stores/userStore';
-import type { User } from '@shared/api/data.models';
+import type { User, UpdateUserRequest } from '@shared/api/data.models';
 
 type EditUserModalProps = {
   user: User;
@@ -30,13 +30,23 @@ export const EditUserModal: FC<EditUserModalProps> = ({ user, isOpen, onClose, o
     handleSubmit,
     reset,
     formState: { errors, isValid, isDirty },
-  } = useForm<User>({
-    defaultValues: user,
+  } = useForm<UpdateUserRequest>({
+    defaultValues: {
+      id: user.id,
+      full_name: user.full_name,
+      phone: user.phone,
+      picture: user.picture,
+    },
     mode: 'onChange',
   });
 
   useEffect(() => {
-    reset(user);
+    reset({
+      id: user.id,
+      full_name: user.full_name,
+      phone: user.phone,
+      picture: user.picture,
+    });
   }, [user, reset]);
 
   const isFormInvalid =
@@ -44,7 +54,7 @@ export const EditUserModal: FC<EditUserModalProps> = ({ user, isOpen, onClose, o
     !isDirty ||
     !user.email?.trim();
 
-  const handleUpdate = async (data: User) => {
+  const handleUpdate = async (data: UpdateUserRequest) => {
     if (isSaving || !user.id) return;
     setIsSaving(true);
     try {
@@ -54,7 +64,6 @@ export const EditUserModal: FC<EditUserModalProps> = ({ user, isOpen, onClose, o
       if (user.id === userStore?.id) {
         await updateUserData({
           full_name: data.full_name,
-          email: data.email,
         });
       }
 
@@ -77,10 +86,10 @@ export const EditUserModal: FC<EditUserModalProps> = ({ user, isOpen, onClose, o
           {t('email')}
         </label>
         <Input
-          {...register('email')}
           id='email'
           name='email'
           type='email'
+          value={user.email}
           disabled
           className='h-12 w-full rounded-xl text-[15px]'
           placeholder={t('email')}

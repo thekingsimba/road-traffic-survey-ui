@@ -21,7 +21,7 @@ export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSur
   const [loading, setLoading] = useState(false);
   const [agents, setAgents] = useState<Array<{ id: string; full_name: string; email: string }>>([]);
   const [formData, setFormData] = useState<UpdateSurveyRequest>({
-    id: survey.id,
+    id: survey.id || '',
     name: survey.name,
     startPoint: survey.startPoint,
     endPoint: survey.endPoint,
@@ -29,7 +29,7 @@ export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSur
     scheduledEndTime: survey.scheduledEndTime,
     startPointAgent: typeof survey.startPointAgent === 'object' ? survey.startPointAgent.id : survey.startPointAgent || '',
     endPointAgent: typeof survey.endPointAgent === 'object' ? survey.endPointAgent.id : survey.endPointAgent || '',
-    status: survey.status
+    status: survey.status === 'terminated' ? 'archived' : survey.status
   });
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSur
   useEffect(() => {
     if (survey) {
       setFormData({
-        id: survey.id,
+        id: survey.id || '',
         name: survey.name,
         startPoint: survey.startPoint,
         endPoint: survey.endPoint,
@@ -63,7 +63,7 @@ export const EditSurveyModal = ({ survey, isOpen, onClose, onComplete }: EditSur
         scheduledEndTime: survey.scheduledEndTime,
         startPointAgent: typeof survey.startPointAgent === 'object' ? survey.startPointAgent.id : survey.startPointAgent || '',
         endPointAgent: typeof survey.endPointAgent === 'object' ? survey.endPointAgent.id : survey.endPointAgent || '',
-        status: survey.status
+        status: survey.status === 'terminated' ? 'archived' : survey.status
       });
     }
   }, [survey]);
